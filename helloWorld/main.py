@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, make_response, abort
 from linebot import (
     LineBotApi, WebhookHandler
@@ -8,18 +9,14 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, StickerMessage
 )
-import json
-import requests
 
 def main():
     app = Flask(__name__)
     with open('../.config') as file:
-        message_url = file.readline().strip()
-        channel_access_token = file.readline().strip()
-        channel_secret = file.readline().strip()
-    
-    line_bot_api = LineBotApi(channel_access_token)
-    handler = WebhookHandler(channel_secret)
+        config = json.load(file)
+
+    line_bot_api = LineBotApi(config['channel_access_token'])
+    handler = WebhookHandler(config['channel_secret'])
 
     @app.route('/api/message', methods=['POST'])
     def callback():
